@@ -35,6 +35,8 @@ in {
       pkgs.sops
       pkgs.terraform_0_13
       pkgs.yq
+      pkgs.mirror-apt
+      pkgs.generate-gpg1-key
     ];
   };
 }
