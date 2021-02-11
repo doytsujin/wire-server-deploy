@@ -73,7 +73,7 @@ rec {
       };
       WorkingDir = "/wire-server-deploy";
       Env = [
-        "KUBECONFIG=/wire-server-deploy/ansible/kubeconfig"
+        "KUBECONFIG=/wire-server-deploy/ansible/inventory/offline/artifacts/kubeconfig"
         "ANSIBLE_CONFIG=/wire-server-deploy/ansible/ansible.cfg"
       ];
     };
