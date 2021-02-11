@@ -36,6 +36,13 @@ rec {
       pkgs.sops
       pkgs.terraform_0_13
       pkgs.yq
+
+      pkgs.create-container-dump
+      pkgs.list-helm-containers
+      pkgs.mirror-apt
+      pkgs.generate-gpg1-key
+      pkgs.kubeadm
+
     ];
   };
 
