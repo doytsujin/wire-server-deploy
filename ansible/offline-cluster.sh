@@ -4,6 +4,9 @@ set -eou pipefail
 
 # This invokes certain playbooks to bootstrap a k8s cluster in an offline environment.
 
+# Disable outgoing traffic
+ansible-playbook -i ./inventory/offline ./simulate-offline.yml
+
 # Copies over binaries and debs, serves assets from the asset host, and configures other hosts to fetch debs from it.
 ansible-playbook -i ./inventory/offline ./setup-offline-sources.yml
 

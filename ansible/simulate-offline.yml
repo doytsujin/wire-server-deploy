@@ -1,0 +1,9 @@
+- hosts: kube-node
+  tasks:
+    - name: "Disable outgoing traffic on default interface"
+      become: true
+      iptables:
+        chain: "OUTPUT"
+        out_interface: "{{ ansible_default_ipv4.interface }}"
+        jump: "DROP"
+        state: "present"
