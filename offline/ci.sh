@@ -20,14 +20,15 @@ install -m755 "$container_image" assets/containers-other/
 mirror-apt assets/debs
 
 (cd assets; tar czf debs.tgz debs)
-rm -rf assets/debs
 
 fingerprint=$(echo "$GPG_PRIVATE_KEY" | gpg --with-colons --import-options show-only --import --fingerprint  | awk -F: '$1 == "fpr" {print $10; exit}')
 
+echo "$fingerprint"
 
 # Copy the binaries to assets/binaries
 mkdir -p assets/binaries
 install -m755 "$(nix-build --no-out-link -A pkgs.wire-binaries)/"* assets/binaries/
+(cd assets; tar czf binaries.tgz binaries)
 
 
 function list-system-containers() {

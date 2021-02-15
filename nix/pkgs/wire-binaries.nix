@@ -8,7 +8,7 @@ let
   # These values are manually kept in sync with:
   # https://github.com/kubernetes-sigs/kubespray/blob/release-2.15/roles/download/defaults/main.yml
   # TODO: Find a better process. Automate this!
-  kube_version = "v1.19.3";
+  kube_version = "v1.19.7";
   etcd_version = "v3.4.13";
   cni_version = "v0.9.0";
   calico_version = "v3.16.5";
@@ -21,17 +21,17 @@ let
     kubelet = fetchurl rec {
       passthru.url = url;
       url = "https://storage.googleapis.com/kubernetes-release/release/${ kube_version }/bin/linux/${ image_arch }/kubelet";
-      sha256 = "1acz50pnbczgd0cha6mklimw77r99ki2zifr82cvydnrxws2m86s";
+      sha256 = "0m3cj0b5070vijv8zj46paxhl89j9mhdcg5phxra3mvdby19dcnq";
     };
     kubeadm = fetchurl rec {
       passthru.url = url;
       url = "https://storage.googleapis.com/kubernetes-release/release/${ kube_version }/bin/linux/${ image_arch }/kubeadm";
-      sha256 = "1qlv3y36wy2wg36ggr1lq3sihpl6bvwf3m1hrq0v2pz0xgyq2x8a";
+      sha256 = "096vj9cx84mpmd09sghp3ky4bkqd6agsnb25qy47ik9k4n2g2gn6";
     };
     kubectl = fetchurl rec {
       passthru.url = url;
       url = "https://storage.googleapis.com/kubernetes-release/release/${ kube_version }/bin/linux/${ image_arch }/kubectl";
-      sha256 = "0mhlpailnfq5c6i9ka2ws5z8grylrq5va4qcb7g6icbandf48p5j";
+      sha256 = "15vjydl91h0igvps2zcxj9bjyksb88ckavdwxmmmnpjpwaxv6vnl";
     };
     calicoctl = fetchurl rec {
       passthru.url = url;
