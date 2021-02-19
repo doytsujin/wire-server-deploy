@@ -38,9 +38,9 @@ function list-system-containers() {
 # TODO: Automate this. This is very wieldy :)
   cat <<EOF
 quay.io/coreos/etcd:v3.4.13
-docker.io/calico/node:v3.16.5
-docker.io/calico/cni:v3.16.5
-docker.io/calico/kube-controllers:v3.16.5
+quay.io/calico/node:v3.16.5
+quay.io/calico/cni:v3.16.5
+quay.io/calico/kube-controllers:v3.16.5
 docker.io/library/nginx:1.19
 docker.io/coredns/coredns:1.7.0
 k8s.gcr.io/dns/k8s-dns-node-cache:1.16.0
