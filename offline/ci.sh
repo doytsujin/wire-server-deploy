@@ -74,7 +74,8 @@ charts=(
   wire/minio-external
   wire/wire-server
   # local-path-provisioner
-  wire/sftd
+  # TODO: uncomment once its dependencies are pinned!
+  # wire/sftd
   # Has a weird dependency on curl:latest. out of scope
   # wire-server-metrics
   # fluent-bit
@@ -103,7 +104,7 @@ for chart in "${charts[@]}"; do
   echo "$chart"
 done | list-helm-containers | create-container-dump assets/containers-helm
 
-tar czf assets/containers-helm.tgz assets/containers-helm
+(cd assets; tar czf containers-helm.tgz containers-helm)
 
 #
 # cp -R values assets/
@@ -111,6 +112,6 @@ cp -R ansible assets/
 echo "docker_ubuntu_repo_repokey: '${fingerprint}'" > assets/ansible/inventory/offline/group_vars/all/key.yml
 
 
-(cd assets; tar xzvf assets.tgz debs.tgz "containers-{helm,system,other,adminhost}.tgz" ansible charts)
+(cd assets; tar czvf assets.tgz debs.tgz binaries.tgz containers-adminhost containers-helm.tgz containers-other.tgz containers-system.tgz ansible charts)
 
 echo "Done"
