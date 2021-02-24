@@ -33,11 +33,14 @@ install -m755 "$(nix-build --no-out-link -A pkgs.wire-binaries)/"* assets/binari
 
 
 function list-system-containers() {
-  kubeadm config images list --kubernetes-version v1.19.3
 # These are manually updated with values from
 # https://github.com/kubernetes-sigs/kubespray/blob/release-2.15/roles/download/defaults/main.yml
 # TODO: Automate this. This is very wieldy :)
   cat <<EOF
+k8s.gcr.io/kube-apiserver:v1.19.7
+k8s.gcr.io/kube-controller-manager:v1.19.7
+k8s.gcr.io/kube-scheduler:v1.19.7
+k8s.gcr.io/kube-proxy:v1.19.7
 quay.io/coreos/etcd:v3.4.13
 quay.io/calico/node:v3.16.5
 quay.io/calico/cni:v3.16.5
