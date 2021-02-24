@@ -116,6 +116,6 @@ cp -R ansible assets/
 echo "docker_ubuntu_repo_repokey: '${fingerprint}'" > assets/ansible/inventory/offline/group_vars/all/key.yml
 
 
-(cd assets; tar czvf assets.tgz debs.tgz binaries.tgz containers-adminhost containers-helm.tgz containers-other.tgz containers-system.tgz ansible charts)
+(cd assets; tar czvf assets.tgz debs.tgz binaries.tgz containers-adminhost containers-helm.tgz containers-other.tgz containers-system.tgz ansible charts values)
 
 echo "Done"
