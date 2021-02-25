@@ -31,6 +31,14 @@ brig:
       secret: "$zrest"
     awsKeyId: dummykey
     awsSecretKey: dummysecret
+    # These are only necessary if you wish to support sign up via SMS/calls
+    # And require accounts at twilio.com / nexmo.com
+    setTwilio: |-
+      sid: "dummy"
+      token: "dummy"
+    setNexmo: |-
+      key: "dummy"
+      secret: "dummy"
 cargohold:
   secrets:
     awsKeyId: "$minio_access_key"
