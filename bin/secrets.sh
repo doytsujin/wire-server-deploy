@@ -47,6 +47,8 @@ nginz:
   secrets:
     zAuth:
       publicKeys: "$zauth_public"
+    # only necessary in test environments (env="staging"). See charts/nginz/README.md
+    basicAuth: "<username>:<htpasswd-hashed-password>"
 EOF
 
 fi
