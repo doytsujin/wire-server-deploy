@@ -1,38 +1,61 @@
 #!/usr/bin/env bash
+set -eu
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ANSIBLE_DIR="$( cd "$SCRIPT_DIR/../ansible" && pwd )"
+VALUES_DIR="$(cd "$SCRIPT_DIR/../values" && pwd)"
 
-mkdir -p "$ANSIBLE_DIR/secrets"
+ZAUTH_CONTAINER="${ZAUTH_CONTAINER:-quay.io/wire/zauth:latest}"
 
-zrest="${ANSIBLE_DIR}/secrets/restund_zrest_secret.txt"
-zpub="${ANSIBLE_DIR}/secrets/zauth_public.txt"
-zpriv="${ANSIBLE_DIR}/secrets/zauth_private.txt"
-miniopub="${ANSIBLE_DIR}/secrets/minio_public.txt"
-miniopriv="${ANSIBLE_DIR}/secrets/minio_private.txt"
+zrest="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64)"
 
-if [[ ! -f $miniopub || ! -f $miniopriv ]]; then
-    echo "Generate a secret for minio (must match the cargohold AWS keys wire-server's secrets/values)..."
-    openssl rand -base64 64 | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 42 > "$miniopriv"
-    openssl rand -base64 64 | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 20 > "$miniopub"
-else
-    echo "re-using existing minio secrets"
+minio_access_key="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 20)"
+minio_secret_key="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 42)"
+
+zauth="$(docker run $ZAUTH_CONTAINER -m gen-keypair -i 1)"
+
+zauth_public=$(echo "$zauth" | yq -r .public)
+zauth_private=$(echo "$zauth" | yq -r .private)
+
+
+if [[ ! -f $VALUES_DIR/wire-server/secrets.yaml ]]; then
+  echo "Writing $VALUES_DIR/values/wire-server/secrets.yaml"
+  cat <<EOF > $VALUES_DIR/values/wire-server/secrets.yaml
+brig:
+  secrets:
+    smtpPassword: dummyPassword
+    zAuth:
+      publicKeys: "$zauth_public"
+      privateKeys: "$zauth_private"
+    turn:
+      secret: "$zrest"
+    awsKeyId: dummykey
+    awsSecretKey: dummysecret
+cargohold:
+  secrets:
+    awsKeyId: "$minio_key_id"
+    awsSecretKey: "$minio_secret_key"
+galley:
+  secrets:
+    awsKeyId: dummykey
+    awsSecretKey: dummysecret
+gundeck:
+  secrets:
+    awsKeyId: dummykey
+    awsSecretKey: dummysecret
+nginz:
+  secrets:
+    zAuth:
+      publicKeys: "$zauth_public"
+EOF
+
 fi
 
-if [[ ! -f $zrest ]]; then
-    echo "Generate a secret for the restund servers (must match the turn.secret key in brig's config)..."
-    openssl rand -base64 64 | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 42 > "$zrest"
-else
-    echo "re-using existing restund secret"
+if [[ ! -f $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml ]]; then
+  echo "Writing $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml"
+  cat << EOT > $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml
+restund_zrest_secret: "$zrest"
+minio_access_key: "$minio_access_key"
+minio_secret_key: "$minio_secret_key"
+EOT
 fi
-
-if [[ ! -f $zpriv || ! -f $zpub ]]; then
-    echo "Generate private and public keys (used both by brig and nginz)..."
-    TMP_KEYS=$(mktemp "/tmp/demo.keys.XXXXXXXXXXX")
-    zauth -m gen-keypair -i 1 > "$TMP_KEYS"
-    cat "$TMP_KEYS" | sed -n 's/public: \(.*\)/\1/p' > "$zpub"
-    cat "$TMP_KEYS" | sed -n 's/secret: \(.*\)/\1/p' > "$zpriv"
-else
-    echo "re-using existing public/private keys"
-fi
-
