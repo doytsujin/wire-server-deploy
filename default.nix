@@ -36,6 +36,7 @@ rec {
       pkgs.sops
       pkgs.terraform_0_13
       pkgs.yq
+      pkgs.openssl
 
       pkgs.create-container-dump
       pkgs.list-helm-containers
@@ -73,7 +74,7 @@ rec {
       };
       WorkingDir = "/wire-server-deploy";
       Env = [
-        "KUBECONFIG=/wire-server-deploy/ansible/inventory/offline/artifacts/kubeconfig"
+        "KUBECONFIG=/wire-server-deploy/ansible/inventory/offline/artifacts/admin.conf"
         "ANSIBLE_CONFIG=/wire-server-deploy/ansible/ansible.cfg"
       ];
     };
