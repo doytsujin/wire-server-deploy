@@ -12,15 +12,15 @@ zrest="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64)"
 minio_access_key="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 20)"
 minio_secret_key="$(tr -dc A-Za-z0-9 </dev/urandom | head -c 42)"
 
-zauth="$(docker run $ZAUTH_CONTAINER -m gen-keypair -i 1)"
+zauth="$(sudo docker run $ZAUTH_CONTAINER -m gen-keypair -i 1)"
 
-zauth_public=$(echo "$zauth" | yq -r .public)
-zauth_private=$(echo "$zauth" | yq -r .private)
+zauth_public=$(echo "$zauth" | awk '{ print $2}')
+zauth_private=$(echo "$zauth" | awk '{ print $2}')
 
 
 if [[ ! -f $VALUES_DIR/wire-server/secrets.yaml ]]; then
-  echo "Writing $VALUES_DIR/values/wire-server/secrets.yaml"
-  cat <<EOF > $VALUES_DIR/values/wire-server/secrets.yaml
+  echo "Writing $VALUES_DIR/wire-server/secrets.yaml"
+  cat <<EOF > $VALUES_DIR/wire-server/secrets.yaml
 brig:
   secrets:
     smtpPassword: dummyPassword
@@ -33,7 +33,7 @@ brig:
     awsSecretKey: dummysecret
 cargohold:
   secrets:
-    awsKeyId: "$minio_key_id"
+    awsKeyId: "$minio_access_key"
     awsSecretKey: "$minio_secret_key"
 galley:
   secrets:
@@ -51,9 +51,9 @@ EOF
 
 fi
 
-if [[ ! -f $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml ]]; then
-  echo "Writing $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml"
-  cat << EOT > $ANSIBLE_DIR/inventory/offline/group_vars/secrets.yaml
+if [[ ! -f $ANSIBLE_DIR/inventory/offline/group_vars/all/secrets.yaml ]]; then
+  echo "Writing $ANSIBLE_DIR/inventory/offline/group_vars/all/secrets.yaml"
+  cat << EOT > $ANSIBLE_DIR/inventory/offline/group_vars/all/secrets.yaml
 restund_zrest_secret: "$zrest"
 minio_access_key: "$minio_access_key"
 minio_secret_key: "$minio_secret_key"
