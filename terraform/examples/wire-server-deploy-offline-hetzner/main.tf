@@ -17,6 +17,12 @@ locals {
   #cloud-config
   runcmd:
     - iptables -A OUTPUT -o eth0 -j DROP
+
+    - iptables -A INPUT  -o eht0 -p udp --sport 53  -j ACCEPT
+    - iptables -A OUTPUT -o eth0 -p udp --dport 53  -j ACCEPT
+
+    - iptables -A INPUT  -o eth0 -p udp --sport 123 -j ACCEPT
+    - iptables -A OUTPUT -o eth0 -p udp --dport 123 -j ACCEPT
   EOF
 }
 
